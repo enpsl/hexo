@@ -119,27 +119,25 @@
 
 
 
-  <meta name="description" content="kubectl命令行管理工具 管理周期1.创建 kubectl run nginx –replicas=3 –image=nginx:1.14 –port=80  kubectl get deploy,pods 2.发布 kubectl expose deployment nginx –port=80 –type=NodePort –target-port=80 –name=nginx-servi">
-<meta name="keywords" content="Kubenetets">
+  <meta name="description" content="Termterm query会去倒排索引中寻找确切的term，它并不知道分词器的存在，这种查询适合keyword、numeric、date等明确值的 term：查询某个字段里含有某个关键词的文档 request12345678GET test_search_index/_search&amp;#123;  &quot;query&quot;: &amp;#123;    &quot;term&quot;: &amp;#123;      &quot;username&quot;:">
+<meta name="keywords" content="elasticsearch">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kubectl命令行管理工具">
-<meta property="og:url" content="https://enpsl.github.io/2019/09/14/2019-09-14-kubectl/index.html">
+<meta property="og:title" content="Elasticsearch Term Match">
+<meta property="og:url" content="https://enpsl.github.io/2019/10/31/2019-10-31-elasticsearch-term/index.html">
 <meta property="og:site_name" content="彭诗亮的博客">
-<meta property="og:description" content="kubectl命令行管理工具 管理周期1.创建 kubectl run nginx –replicas=3 –image=nginx:1.14 –port=80  kubectl get deploy,pods 2.发布 kubectl expose deployment nginx –port=80 –type=NodePort –target-port=80 –name=nginx-servi">
+<meta property="og:description" content="Termterm query会去倒排索引中寻找确切的term，它并不知道分词器的存在，这种查询适合keyword、numeric、date等明确值的 term：查询某个字段里含有某个关键词的文档 request12345678GET test_search_index/_search&amp;#123;  &quot;query&quot;: &amp;#123;    &quot;term&quot;: &amp;#123;      &quot;username&quot;:">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://enpsl.github.io/img/in-post/2019-09-14/1.jpg">
-<meta property="og:updated_time" content="2019-09-15T02:26:22.310Z">
+<meta property="og:updated_time" content="2019-11-01T08:27:19.496Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kubectl命令行管理工具">
-<meta name="twitter:description" content="kubectl命令行管理工具 管理周期1.创建 kubectl run nginx –replicas=3 –image=nginx:1.14 –port=80  kubectl get deploy,pods 2.发布 kubectl expose deployment nginx –port=80 –type=NodePort –target-port=80 –name=nginx-servi">
-<meta name="twitter:image" content="https://enpsl.github.io/img/in-post/2019-09-14/1.jpg">
+<meta name="twitter:title" content="Elasticsearch Term Match">
+<meta name="twitter:description" content="Termterm query会去倒排索引中寻找确切的term，它并不知道分词器的存在，这种查询适合keyword、numeric、date等明确值的 term：查询某个字段里含有某个关键词的文档 request12345678GET test_search_index/_search&amp;#123;  &quot;query&quot;: &amp;#123;    &quot;term&quot;: &amp;#123;      &quot;username&quot;:">
 
 
 
 
 
 
-  <link rel="canonical" href="https://enpsl.github.io/2019/09/14/2019-09-14-kubectl/">
+  <link rel="canonical" href="https://enpsl.github.io/2019/10/31/2019-10-31-elasticsearch-term/">
 
 
 
@@ -149,7 +147,7 @@
   };
 </script>
 
-  <title>kubectl命令行管理工具 | 彭诗亮的博客</title>
+  <title>Elasticsearch Term Match | 彭诗亮的博客</title>
   
 
 
@@ -411,7 +409,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://enpsl.github.io/2019/09/14/2019-09-14-kubectl/">
+    <link itemprop="mainEntityOfPage" href="https://enpsl.github.io/2019/10/31/2019-10-31-elasticsearch-term/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="enpsl">
@@ -428,7 +426,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">kubectl命令行管理工具
+          <h1 class="post-title" itemprop="name headline">Elasticsearch Term Match
 
               
             
@@ -454,7 +452,7 @@
                 
               
 
-              <time title="创建时间：2019-09-14 20:30:00" itemprop="dateCreated datePublished" datetime="2019-09-14T20:30:00+08:00">2019-09-14</time>
+              <time title="创建时间：2019-10-31 14:30:00" itemprop="dateCreated datePublished" datetime="2019-10-31T14:30:00+08:00">2019-10-31</time>
             
 
             
@@ -471,7 +469,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-15 10:26:22" itemprop="dateModified" datetime="2019-09-15T10:26:22+08:00">2019-09-15</time>
+                <time title="修改时间：2019-11-01 16:27:19" itemprop="dateModified" datetime="2019-11-01T16:27:19+08:00">2019-11-01</time>
               
             
           </span>
@@ -488,8 +486,8 @@
                   <i class="fa fa-comment-o"></i>
                 </span>
             
-                <a href="/2019/09/14/2019-09-14-kubectl/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/09/14/2019-09-14-kubectl/" itemprop="commentCount"></span>
+                <a href="/2019/10/31/2019-10-31-elasticsearch-term/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/10/31/2019-10-31-elasticsearch-term/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -511,7 +509,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">1.8k</span>
+                <span title="本文字数">3.7k</span>
               
 
               
@@ -525,7 +523,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">2 分钟</span>
+                <span title="阅读时长">3 分钟</span>
               
             </div>
           
@@ -545,43 +543,21 @@
       
 
       
-        <h2 id="kubectl命令行管理工具"><a href="#kubectl命令行管理工具" class="headerlink" title="kubectl命令行管理工具"></a>kubectl命令行管理工具</h2><p><img src="/img/in-post/2019-09-14/1.jpg" alt="avatar"></p>
-<h3 id="管理周期"><a href="#管理周期" class="headerlink" title="管理周期"></a>管理周期</h3><p>1.创建</p>
-<p>kubectl run nginx –replicas=3 –image=nginx:1.14 –port=80 </p>
-<p>kubectl get deploy,pods</p>
-<p>2.发布</p>
-<p>kubectl expose deployment nginx –port=80 –type=NodePort –target-port=80 –name=nginx-service </p>
-<p>kubectl get service</p>
-<p>3.更新</p>
-<p>kubectl set image deployment/nginx nginx=nginx:1.15</p>
-<p>4.回滚</p>
-<p>kubectl rollout history deployment/nginx </p>
-<p>kubectl rollout undo deployment/nginx</p>
-<p>5.删除</p>
-<p>kubectl delete deploy/nginx</p>
-<p>kubectl delete svc/nginx-service</p>
-<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#创建</span></span><br><span class="line">kubectl run &lt;deployment&gt; --replicas=&lt;副本数&gt; --image=&lt;image&gt; --port=&lt;port&gt;</span><br><span class="line"><span class="comment">#获取所有deploy</span></span><br><span class="line">kubectl get deploy</span><br><span class="line"><span class="comment">#获取某个deploy</span></span><br><span class="line">kubectl get deploy/nginx</span><br></pre></td></tr></table></figure>
-<h2 id="kubectl远程连接k8s集群"><a href="#kubectl远程连接k8s集群" class="headerlink" title="kubectl远程连接k8s集群"></a>kubectl远程连接k8s集群</h2><p>创建sh脚本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">APISERVER=<span class="variable">$1</span></span><br><span class="line">SSL_DIR=<span class="variable">$2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建kubelet bootstrapping kubeconfig</span></span><br><span class="line"><span class="built_in">export</span> KUBE_APISERVER=<span class="string">"https://<span class="variable">$APISERVER</span>:6443"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置集群参数</span></span><br><span class="line">kubectl config <span class="built_in">set</span>-cluster kubernetes \</span><br><span class="line">  --certificate-authority=<span class="variable">$SSL_DIR</span>/ca.pem \</span><br><span class="line">  --embed-certs=<span class="literal">true</span> \</span><br><span class="line">  --server=<span class="variable">$&#123;KUBE_APISERVER&#125;</span> \</span><br><span class="line">  --kubeconfig=config</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#设置用户项中cluster-admin用户证书认证字段</span></span><br><span class="line">kubectl config <span class="built_in">set</span>-credentials cluster-admin \</span><br><span class="line">--certificate-authority=<span class="variable">$SSL_DIR</span>/ca.pem \</span><br><span class="line">--client-key=<span class="variable">$SSL_DIR</span>/admin-key.pem \</span><br><span class="line">--client-certificate=<span class="variable">$SSL_DIR</span>/admin.pem \</span><br><span class="line">--kubeconfig=config</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置默认上下文</span></span><br><span class="line">kubectl config <span class="built_in">set</span>-context default --cluster=kubernetes --user=cluster-admin --kubeconfig=config</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置当前环境的default</span></span><br><span class="line">kubectl config use-context default --kubeconfig=config</span><br></pre></td></tr></table></figure>
-<p>执行脚本文件生成config文件<br>eg:<br><figure class="highlight sh"><figcaption><span>config.sh <ip> <ssl-dir>```</ssl-dir></ip></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">```bash</span><br><span class="line">mkdir ~/.kube</span><br><span class="line">cp config ~/.kube</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>证书文件需与master节点生成的证书一致</p>
-</blockquote>
-<p>执行kubectl get node 即可看到集群信息</p>
-<h2 id="YAML配置文件"><a href="#YAML配置文件" class="headerlink" title="YAML配置文件"></a>YAML配置文件</h2><p>YAML 是一种简洁的非标记语言。</p>
-<p>语法格式:</p>
-<ul>
-<li>缩进表示层级关系</li>
-<li>不支持制表符“tab”缩进，使用空格缩进 • 通常开头缩进 2 个空格</li>
-<li>字符后缩进 1 个空格，如冒号、逗号等</li>
-<li>“—” 表示YAML格式，一个文件的开始</li>
-<li>“#” 注释</li>
-</ul>
-<h3 id="YAML配置文件管理资源"><a href="#YAML配置文件管理资源" class="headerlink" title="YAML配置文件管理资源"></a>YAML配置文件管理资源</h3><ul>
-<li>用run命令生成<br>kubectl run –image=nginx nginx -o yaml –dry-run &gt; my-deploy.yaml</li>
-<li>用get命令导出<br>kubectl get my-deploy/nginx -o=yaml –export &gt; my-deploy.yaml</li>
-<li>Pod容器的字段拼写忘记了<br>kubectl explain pods.spec.containers</li>
-</ul>
+        <h2 id="Term"><a href="#Term" class="headerlink" title="Term"></a>Term</h2><p><code>term query</code>会去倒排索引中寻找确切的<code>term</code>，它并不知道分词器的存在，这种查询适合<code>keyword</code>、<code>numeric</code>、<code>date</code>等明确值的</p>
+<p>term：查询某个字段里含有某个关键词的文档</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "term": &#123;</span><br><span class="line">      "username": "alfred"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回结果<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">"hits" : [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"2"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">0.636667</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"java senior engineer and java specialist"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">28</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1980-05-07"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"1"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">0.48898652</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred way"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"java engineer"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">18</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1990-01-02"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"4"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">0.39691794</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred junior way"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"ruby engineer"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">23</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1989-08-07"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br></pre></td></tr></table></figure></p>
+<p>发现，<code>username</code>里有关<code>alfred</code>的关键字都查出来了，但是我只想精确匹配<code>alfred way</code>这个，按照下面的写法看看能不能查出来：</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "term": &#123;</span><br><span class="line">      "username": "alfred way"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行发现无数据，从概念上看，<code>term</code>属于精确匹配，只能查单个词。我想用<code>term</code>匹配多个词怎么做？可以使用terms来：</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "terms": &#123;</span><br><span class="line">      "username": ["alfred", "way"]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发现全部查询出来，为什么？因为<code>terms</code>里的<code>[ ]</code>多个是或者的关系，只要满足其中一个词就可以。想要通知满足两个词的话，就得使用在search api那篇中提到的<code>bool</code>查询来做了</p>
+<p>match查询：</p>
+<p>match query 知道分词器的存在，会对field进行分词操作，然后再查询<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match": &#123;</span><br><span class="line">      "username": "alfred"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>match_all：查询所有文档<br>{ “match_all”: {}} 匹配所有的， 当不给查询条件时，默认。<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match_all": &#123;</span><br><span class="line">      "boost": 1.2</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>_score</code>随boost值改变而改变:</p>
+<p>multi_match：可以指定多个字段<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "profile": "true", </span><br><span class="line">  "query": &#123;</span><br><span class="line">    "multi_match": &#123;</span><br><span class="line">      "query" : "alfred java",</span><br><span class="line">      "fields":  ["username","job"]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>返回结果：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">"hits" : [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">    <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">    <span class="attr">"_id"</span> : <span class="string">"1"</span>,</span><br><span class="line">    <span class="attr">"_score"</span> : <span class="number">0.636667</span>,</span><br><span class="line">    <span class="attr">"_source"</span> : &#123;</span><br><span class="line">      <span class="attr">"username"</span> : <span class="string">"alfred way"</span>,</span><br><span class="line">      <span class="attr">"job"</span> : <span class="string">"java engineer"</span>,</span><br><span class="line">      <span class="attr">"age"</span> : <span class="number">18</span>,</span><br><span class="line">      <span class="attr">"birth"</span> : <span class="string">"1990-01-02"</span>,</span><br><span class="line">      <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">    <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">    <span class="attr">"_id"</span> : <span class="string">"2"</span>,</span><br><span class="line">    <span class="attr">"_score"</span> : <span class="number">0.636667</span>,</span><br><span class="line">    <span class="attr">"_source"</span> : &#123;</span><br><span class="line">      <span class="attr">"username"</span> : <span class="string">"alfred"</span>,</span><br><span class="line">      <span class="attr">"job"</span> : <span class="string">"java senior engineer and java specialist"</span>,</span><br><span class="line">      <span class="attr">"age"</span> : <span class="number">28</span>,</span><br><span class="line">      <span class="attr">"birth"</span> : <span class="string">"1980-05-07"</span>,</span><br><span class="line">      <span class="attr">"isMarried"</span> : <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">    <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">    <span class="attr">"_id"</span> : <span class="string">"3"</span>,</span><br><span class="line">    <span class="attr">"_score"</span> : <span class="number">0.48898652</span>,</span><br><span class="line">    <span class="attr">"_source"</span> : &#123;</span><br><span class="line">      <span class="attr">"username"</span> : <span class="string">"lee"</span>,</span><br><span class="line">      <span class="attr">"job"</span> : <span class="string">"java and ruby engineer"</span>,</span><br><span class="line">      <span class="attr">"age"</span> : <span class="number">22</span>,</span><br><span class="line">      <span class="attr">"birth"</span> : <span class="string">"1985-08-07"</span>,</span><br><span class="line">      <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">    <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">    <span class="attr">"_id"</span> : <span class="string">"4"</span>,</span><br><span class="line">    <span class="attr">"_score"</span> : <span class="number">0.39691794</span>,</span><br><span class="line">    <span class="attr">"_source"</span> : &#123;</span><br><span class="line">      <span class="attr">"username"</span> : <span class="string">"alfred junior way"</span>,</span><br><span class="line">      <span class="attr">"job"</span> : <span class="string">"ruby engineer"</span>,</span><br><span class="line">      <span class="attr">"age"</span> : <span class="number">23</span>,</span><br><span class="line">      <span class="attr">"birth"</span> : <span class="string">"1989-08-07"</span>,</span><br><span class="line">      <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -620,7 +596,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Kubenetets/" rel="tag"><i class="fa fa-tag"></i> Kubenetets</a>
+            <a href="/tags/elasticsearch/" rel="tag"><i class="fa fa-tag"></i> elasticsearch</a>
           
         </div>
       
@@ -687,8 +663,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/08/31/2019-08-31-k8s/" rel="next" title="Kubenetets 安装">
-                <i class="fa fa-chevron-left"></i> Kubenetets 安装
+              <a href="/2019/10/25/2019-10-25-hexo-deploy/" rel="next" title="hexo 部署小记">
+                <i class="fa fa-chevron-left"></i> hexo 部署小记
               </a>
             
           </div>
@@ -696,10 +672,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/09/22/2019-09-22-elastic/" rel="prev" title="Elasticsearch Index API">
-                Elasticsearch Index API <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -896,7 +868,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#kubectl命令行管理工具"><span class="nav-number">1.</span> <span class="nav-text">kubectl命令行管理工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#管理周期"><span class="nav-number">1.1.</span> <span class="nav-text">管理周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命令"><span class="nav-number">1.2.</span> <span class="nav-text">命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubectl远程连接k8s集群"><span class="nav-number">2.</span> <span class="nav-text">kubectl远程连接k8s集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YAML配置文件"><span class="nav-number">3.</span> <span class="nav-text">YAML配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#YAML配置文件管理资源"><span class="nav-number">3.1.</span> <span class="nav-text">YAML配置文件管理资源</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Term"><span class="nav-number">1.</span> <span class="nav-text">Term</span></a></li></ol></div>
             
 
           </div>
