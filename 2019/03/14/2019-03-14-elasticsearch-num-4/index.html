@@ -128,7 +128,7 @@
 <meta property="og:description" content="mappingmapping是类似于数据库中的表结构定义，主要作用如下：  定义index下的字段名 定义字段类型，比如数值型、浮点型、布尔型等 定义倒排索引相关的设置，比如是否索引、记录position等  request1234567PUT test_index/_doc/1&amp;#123;  &quot;username&quot;: &quot;jack&quot;,  &quot;age&quot;: 15&amp;#125;GET test_index/_">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://enpsl.github.io/img/in-post/2019-03-14/1.png">
-<meta property="og:updated_time" content="2019-10-29T02:37:01.055Z">
+<meta property="og:updated_time" content="2019-11-12T07:14:20.113Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="elasticsearch入门(二)">
 <meta name="twitter:description" content="mappingmapping是类似于数据库中的表结构定义，主要作用如下：  定义index下的字段名 定义字段类型，比如数值型、浮点型、布尔型等 定义倒排索引相关的设置，比如是否索引、记录position等  request1234567PUT test_index/_doc/1&amp;#123;  &quot;username&quot;: &quot;jack&quot;,  &quot;age&quot;: 15&amp;#125;GET test_index/_">
@@ -471,7 +471,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-10-29 10:37:01" itemprop="dateModified" datetime="2019-10-29T10:37:01+08:00">2019-10-29</time>
+                <time title="修改时间：2019-11-12 15:14:20" itemprop="dateModified" datetime="2019-11-12T15:14:20+08:00">2019-11-12</time>
               
             
           </span>
@@ -511,7 +511,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">14k</span>
+                <span title="本文字数">15k</span>
               
 
               
@@ -737,6 +737,24 @@
 <li>path_match,path_unmatch: 匹配路径</li>
 </ul>
 <p><strong>设置以message开头的字段都设置为text类型 （顺序由上而下）</strong><br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">PUT test_index</span><br><span class="line">&#123;</span><br><span class="line">  "mappings": &#123;</span><br><span class="line">    "dynamic_templates": [</span><br><span class="line">      &#123;</span><br><span class="line">        "message_as_text": &#123;</span><br><span class="line">          "match_mapping_type": "string",</span><br><span class="line">          "match": "message*",</span><br><span class="line">          "mapping": &#123;</span><br><span class="line">            "type": "text"</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        "strings_as_keywords": &#123;</span><br><span class="line">          "match_mapping_type": "string",</span><br><span class="line">          "mapping": &#123;</span><br><span class="line">            "type": "keyword"</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Index-Template"><a href="#Index-Template" class="headerlink" title="Index Template"></a>Index Template</h3><p><code>Index Template</code>帮你设定mappings和settings,并按照一定规则，自动匹配到新创建的索引上</p>
+<ul>
+<li>仅生效与新创建的索引，不会影响之前的索引</li>
+<li>可设定多个，会自动<code>merge</code>在一起</li>
+<li>可指定<code>order</code>值,控制merging的过程</li>
+</ul>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">PUT _template/default_template</span><br><span class="line">&#123;</span><br><span class="line">  "index_patterns": ["*"],</span><br><span class="line">  "order": 0,</span><br><span class="line">  "version": 1,</span><br><span class="line">  "settings": &#123;</span><br><span class="line">    "number_of_shards": 3,</span><br><span class="line">    "number_of_replicas": 1</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PUT _template/default_template1</span><br><span class="line">&#123;</span><br><span class="line">  "index_patterns": ["*"],</span><br><span class="line">  "order": 1,</span><br><span class="line">  "version": 1,</span><br><span class="line">  "settings": &#123;</span><br><span class="line">    "number_of_shards": 3,</span><br><span class="line">    "number_of_replicas": 1</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>工作方式:</p>
+<p>当一个索引被创建时：</p>
+<ul>
+<li>应用默认的settings和mappings</li>
+<li>应用<code>order</code>数值低的index template的设定</li>
+<li>应用<code>order</code>高的index template的设定，之前设定被覆盖</li>
+<li>用户指定的settings和mappings会覆盖默认的模版设定</li>
+</ul>
+<blockquote>
+<p>上面的两个设定都会被应用，但是order高的会覆盖低的设定</p>
+</blockquote>
 
       
     </div>
@@ -930,7 +948,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">35</span>
+                    <span class="site-state-item-count">36</span>
                     <span class="site-state-item-name">文章</span>
                   </a>
                 </div>
@@ -1051,7 +1069,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mapping"><span class="nav-number">1.</span> <span class="nav-text">mapping</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义mapping"><span class="nav-number">1.1.</span> <span class="nav-text">自定义mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copy-to"><span class="nav-number">1.2.</span> <span class="nav-text">copy_to</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Index"><span class="nav-number">1.3.</span> <span class="nav-text">Index</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#index-options"><span class="nav-number">1.4.</span> <span class="nav-text">index_options</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#null-value"><span class="nav-number">1.5.</span> <span class="nav-text">null_value</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型"><span class="nav-number">1.6.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamic-mapping"><span class="nav-number">1.7.</span> <span class="nav-text">Dynamic mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注意"><span class="nav-number">1.8.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日期自动识别"><span class="nav-number">1.9.</span> <span class="nav-text">日期自动识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数字自动识别"><span class="nav-number">1.10.</span> <span class="nav-text">数字自动识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamic-Template"><span class="nav-number">1.11.</span> <span class="nav-text">Dynamic Template</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mapping"><span class="nav-number">1.</span> <span class="nav-text">mapping</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义mapping"><span class="nav-number">1.1.</span> <span class="nav-text">自定义mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copy-to"><span class="nav-number">1.2.</span> <span class="nav-text">copy_to</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Index"><span class="nav-number">1.3.</span> <span class="nav-text">Index</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#index-options"><span class="nav-number">1.4.</span> <span class="nav-text">index_options</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#null-value"><span class="nav-number">1.5.</span> <span class="nav-text">null_value</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型"><span class="nav-number">1.6.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamic-mapping"><span class="nav-number">1.7.</span> <span class="nav-text">Dynamic mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注意"><span class="nav-number">1.8.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日期自动识别"><span class="nav-number">1.9.</span> <span class="nav-text">日期自动识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数字自动识别"><span class="nav-number">1.10.</span> <span class="nav-text">数字自动识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamic-Template"><span class="nav-number">1.11.</span> <span class="nav-text">Dynamic Template</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Index-Template"><span class="nav-number">1.12.</span> <span class="nav-text">Index Template</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -1083,7 +1101,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">202k</span>
+    <span title="站点总字数">213k</span>
   
 
   
@@ -1092,7 +1110,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点阅读时长">3:03</span>
+    <span title="站点阅读时长">3:14</span>
   
 </div>
 
