@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.7.0">
+
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="官方文档实现对es中存储的数据进行查询分析，endpoint为_search，查询主要有两种形式：  URI Search：操作简便，方便通过命令行测试，仅包含部分查询语法 Request Body Search：es提供完备查询语法Query DSL  示例：request123456789GET /user/_search?q=gender:MGET /user/_search&amp;#123;">
+<meta name="keywords" content="elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch Search API">
+<meta property="og:url" content="https://enpsl.github.io/2020/05/15/2019-03-15-elasticsearch-num5/index.html">
+<meta property="og:site_name" content="彭诗亮的博客">
+<meta property="og:description" content="官方文档实现对es中存储的数据进行查询分析，endpoint为_search，查询主要有两种形式：  URI Search：操作简便，方便通过命令行测试，仅包含部分查询语法 Request Body Search：es提供完备查询语法Query DSL  示例：request123456789GET /user/_search?q=gender:MGET /user/_search&amp;#123;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://enpsl.github.io/img/in-post/2019-03-15/1.png">
+<meta property="og:updated_time" content="2020-12-26T02:50:19.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elasticsearch Search API">
+<meta name="twitter:description" content="官方文档实现对es中存储的数据进行查询分析，endpoint为_search，查询主要有两种形式：  URI Search：操作简便，方便通过命令行测试，仅包含部分查询语法 Request Body Search：es提供完备查询语法Query DSL  示例：request123456789GET /user/_search?q=gender:MGET /user/_search&amp;#123;">
+<meta name="twitter:image" content="https://enpsl.github.io/img/in-post/2019-03-15/1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://enpsl.github.io/2020/05/15/2019-03-15-elasticsearch-num5/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Elasticsearch Search API | 彭诗亮的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"><a href="https://github.com/enpsl/enpsl.github.io" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">彭诗亮的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-golang-notes">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/golang-note/" rel="section"><i class="menu-item-icon fa fa-fw fa-book"></i> <br>golang-notes</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-resume">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/resume/" rel="section"><i class="menu-item-icon fa fa-fw fa-sticky-note"></i> <br>趣味简历示例</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://enpsl.github.io/2020/05/15/2019-03-15-elasticsearch-num5/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="enpsl">
+      <meta itemprop="description" content="my blog">
+      <meta itemprop="image" content="/images/pengshiliang.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="彭诗亮的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Elasticsearch Search API
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-15 14:30:00" itemprop="dateCreated datePublished" datetime="2020-05-15T14:30:00+08:00">2020-05-15</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-12-26 10:50:19" itemprop="dateModified" datetime="2020-12-26T10:50:19+08:00">2020-12-26</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <a href="/2020/05/15/2019-03-15-elasticsearch-num5/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2020/05/15/2019-03-15-elasticsearch-num5/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">17k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">16 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/6.5/search.html" target="_blank" rel="noopener">官方文档</a><br>实现对es中存储的数据进行查询分析，endpoint为<code>_search</code>，查询主要有两种形式：</p>
+<ul>
+<li>URI Search：操作简便，方便通过命令行测试，仅包含部分查询语法</li>
+<li>Request Body Search：es提供完备查询语法Query DSL</li>
+</ul>
+<p>示例：<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET /user/_search?q=gender:M</span><br><span class="line">GET /user/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match": &#123;</span><br><span class="line">      "gender": "M"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="URI-Search详解"><a href="#URI-Search详解" class="headerlink" title="URI Search详解"></a>URI Search详解</h2><p>通过url query参数来实现搜索，常用参数如下：</p>
+<ul>
+<li>q: 指定查询语句，语法为 Query String Syntax</li>
+<li>df: q中不指定字段时默认查询的字段，如果不指定，es会查询所有字段</li>
+<li>sort：排序</li>
+<li>timeout：指定超时时间，默认不超时</li>
+<li>from,size：用于分页</li>
+</ul>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /myindex/_search?q=alfred&amp;df=user&amp;sort=age:asc&amp;from=4&amp;size=10&amp;timeout=1s</span><br><span class="line">#查询user字段包含alfred的文档，结果按照age升序排列，返回第5-14个文档，如果超过1s没有结束，则以超时结束</span><br></pre></td></tr></table></figure>
+<h2 id="Query-String-Syntax"><a href="#Query-String-Syntax" class="headerlink" title="Query String Syntax"></a>Query String Syntax</h2><h3 id="语法介绍"><a href="#语法介绍" class="headerlink" title="语法介绍"></a>语法介绍</h3><ol>
+<li><p>term与phrase</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">alfred way 等效于 alfred OR way</span><br><span class="line">"alfred way" 词语查询，要求先后顺序</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>泛查询</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alfred等效于在所有字段去匹配该term</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指定字段</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name:alfred</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Group分组指定，使用括号指定匹配的规则</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(quick OR brown) AND fox</span><br><span class="line">status:(active OR pending) title:(full text search)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>q=&lt;…&gt;内容如果有空格会当作or处理</p>
+</blockquote>
+<blockquote>
+<p>加括号和不加括号的区别：加括号表示status是active或status是pengding结果，不加括号表示<br>status是active或者结果中包含pending</p>
+</blockquote>
+<ol start="5">
+<li><p>布尔操作符<br>AND(&amp;&amp;),OR(||),NOT(!)</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name:(tom NOT lee) 注意大写，不能小写</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>“+ -“分别对应must和must_not</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name:(tom +lee -alfred)</span><br><span class="line">等价于</span><br><span class="line">name:((lee &amp;&amp; !alfred)||(tom &amp;&amp; lee &amp;&amp; !alfred))</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>+在url中会被解析为空格，要使用encode后的结果才可以，为%2B</p>
+</blockquote>
+<ol start="7">
+<li>范围查询，支持数值和日志</li>
+</ol>
+<ul>
+<li><p>区间写法，闭区间用[],开区间用{}</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">age: [1 TO 10]意为 1&lt;=age&lt;=10</span><br><span class="line">age: [1 TO 10&#125;意为 1&lt;=age&lt;10</span><br><span class="line">age: [1 TO ]意为 age&gt;=1</span><br><span class="line">age: [* TO 10]意为 age&lt;=10</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>算数符号写法</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">age:&gt;=1</span><br><span class="line">age:(&gt;=1&amp;&amp;&lt;=10)或者age:(+&gt;=1 +&lt;=10)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol start="8">
+<li><p>通配符查询：？代表一个字符，*代表0或多个字符</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">name:t?m</span><br><span class="line">name:tom*</span><br><span class="line"></span><br><span class="line">通配符匹配执行效率低，且占用较多内存，不建议使用</span><br><span class="line">如无特殊需求，不要将?/*放在最前面</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>正则表达式</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name:/[mb]oat/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>模糊匹配 fuzzy query</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">name:roam~1</span><br><span class="line">匹配与roam差一个character的词，比如foam roams等</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>近似度查询 proximity search</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"fox quick"~5</span><br><span class="line">允许fox 和quick 之间差5个词语</span><br><span class="line">以term为单位进行差异比较，比如"quick fox" "quick brown fox"都会被匹配</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="查询示例"><a href="#查询示例" class="headerlink" title="查询示例"></a>查询示例</h3><p>添加一些数据<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">DELETE test_search_index</span><br><span class="line"></span><br><span class="line">PUT test_search_index</span><br><span class="line">&#123;</span><br><span class="line">  "settings": &#123;</span><br><span class="line">    "index":&#123;</span><br><span class="line">        "number_of_shards": "1"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">POST test_search_index/_bulk</span><br><span class="line">&#123;"index":&#123;"_id":"1"&#125;&#125;</span><br><span class="line">&#123;"username":"alfred way","job":"java engineer","age":18,"birth":"1990-01-02","isMarried":false&#125;</span><br><span class="line">&#123;"index":&#123;"_id":"2"&#125;&#125;</span><br><span class="line">&#123;"username":"alfred","job":"java senior engineer and java specialist","age":28,"birth":"1980-05-07","isMarried":true&#125;</span><br><span class="line">&#123;"index":&#123;"_id":"3"&#125;&#125;</span><br><span class="line">&#123;"username":"lee","job":"java and ruby engineer","age":22,"birth":"1985-08-07","isMarried":false&#125;</span><br><span class="line">&#123;"index":&#123;"_id":"4"&#125;&#125;</span><br><span class="line">&#123;"username":"alfred junior way","job":"ruby engineer","age":23,"birth":"1989-08-07","isMarried":false&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查询所有关键词中有alfred的<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=alfred</span><br><span class="line">#profile设置为true可以分析elasticsearch的具体过程</span><br><span class="line">GET test_search_index/_search?q=alfred</span><br><span class="line">&#123;</span><br><span class="line">  "profile":true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查询所有关键词中有alfred的并指定为username字段<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:alfred</span><br></pre></td></tr></table></figure></p>
+<p>查询所有关键词中有alfred或者way的并指定为username字段<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:alfred way</span><br></pre></td></tr></table></figure></p>
+<p>如果加上””则表示关键词中必须包含alfred way<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:"alfred way"</span><br></pre></td></tr></table></figure></p>
+<p>username字段中必须包含alfred和其它字段包含way的<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:alfred AND way</span><br></pre></td></tr></table></figure></p>
+<p>username字段中必须包含alfred和way的<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:(alfred AND way)</span><br></pre></td></tr></table></figure></p>
+<p>为了便于区别()的作用，在加入一条数据</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST test_search_index/doc/_bulk/</span><br><span class="line">&#123;"index":&#123;"_id":"7"&#125;&#125;</span><br><span class="line">&#123;"username":"alfred","job":"java engineer way","age":18,"birth":"1990-01-02","isMarried":false&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">#q=username:alfred AND wayd的结果</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"took"</span> : <span class="number">3</span>,</span><br><span class="line">  <span class="attr">"timed_out"</span> : <span class="literal">false</span>,</span><br><span class="line">  <span class="attr">"_shards"</span> : &#123;</span><br><span class="line">    <span class="attr">"total"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"successful"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"skipped"</span> : <span class="number">0</span>,</span><br><span class="line">    <span class="attr">"failed"</span> : <span class="number">0</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"hits"</span> : &#123;</span><br><span class="line">    <span class="attr">"total"</span> : <span class="number">3</span>,</span><br><span class="line">    <span class="attr">"max_score"</span> : <span class="number">2.329832</span>,</span><br><span class="line">    <span class="attr">"hits"</span> : [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"7"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">2.329832</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"java engineer way"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">18</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1990-01-02"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"1"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">1.2048805</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred way"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"java engineer"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">18</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1990-01-02"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"4"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">0.966926</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred junior way"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"ruby engineer"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">23</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1989-08-07"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">#q=username:(alfred AND way)的结果</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"took"</span> : <span class="number">2</span>,</span><br><span class="line">  <span class="attr">"timed_out"</span> : <span class="literal">false</span>,</span><br><span class="line">  <span class="attr">"_shards"</span> : &#123;</span><br><span class="line">    <span class="attr">"total"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"successful"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"skipped"</span> : <span class="number">0</span>,</span><br><span class="line">    <span class="attr">"failed"</span> : <span class="number">0</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"hits"</span> : &#123;</span><br><span class="line">    <span class="attr">"total"</span> : <span class="number">2</span>,</span><br><span class="line">    <span class="attr">"max_score"</span> : <span class="number">1.2048805</span>,</span><br><span class="line">    <span class="attr">"hits"</span> : [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"1"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">1.2048805</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred way"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"java engineer"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">18</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1990-01-02"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"4"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">0.966926</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred junior way"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"ruby engineer"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">23</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1989-08-07"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>username字段中必须包含alfred但是没有way的<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:(alfred NOT way)</span><br></pre></td></tr></table></figure></p>
+<p>username必须含有way的<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:(alfred +way)  +会被识别为空格</span><br><span class="line">GET test_search_index/_search?q=username:(alfred %2Bway)</span><br></pre></td></tr></table></figure></p>
+<p>范围查询：<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:alfred age:&gt;26</span><br><span class="line">#username字段包含alfred或者age大于26</span><br><span class="line">GET test_search_index/_search?q=username:alfred AND age:&gt;20</span><br><span class="line">#username字段包含alfred并且age大于20</span><br><span class="line">GET test_search_index/_search?q=birth:(&gt;1980 AND &lt;1990)</span><br><span class="line">#birth字段在1980到1990之间</span><br></pre></td></tr></table></figure></p>
+<p>正则表达式和通配符:<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:alf*</span><br><span class="line">GET test_search_index/_search?q=username:/[a]?l.*/</span><br></pre></td></tr></table></figure></p>
+<p>模糊查询和近似度：<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?q=username:alfed~1</span><br><span class="line">GET test_search_index/_search?q=username:alfd~2</span><br><span class="line">GET test_search_index/_search?q=job:"java engineer"</span><br><span class="line">GET test_search_index/_search?q=job:"java engineer"~1</span><br></pre></td></tr></table></figure></p>
+<h2 id="Request-Body-Search"><a href="#Request-Body-Search" class="headerlink" title="Request Body Search"></a>Request Body Search</h2><p>将查询语句通过http request body 发送到es，主要包含如下参数：</p>
+<ul>
+<li>query: 符合Query DSL语法的查询语句</li>
+<li>from,size</li>
+<li>timeout</li>
+<li>sort</li>
+<li>…</li>
+</ul>
+<h3 id="Query-DSL"><a href="#Query-DSL" class="headerlink" title="Query DSL"></a>Query DSL</h3><p>Query DSL: 基于json定义的查询语言，主要包含如下两种类型:</p>
+<ul>
+<li>字段类查询：如term、match、range等，只针对某一字段进行查询</li>
+<li>复合查询：如bool查询等，包含一个或多个字段类查询或者复合查询语句</li>
+</ul>
+<h4 id="字段类查询"><a href="#字段类查询" class="headerlink" title="字段类查询"></a>字段类查询</h4><p>字段类查询主要包括以下两类：</p>
+<ul>
+<li>全文匹配：针对text类型的字段进行全文检索，会对查询语句先进行分词处理，如match,match_phrase等query类型</li>
+<li>单词匹配：不会对查询语句做分词处理，直接去匹配字段的倒排索引，如term,terms,range等query类型</li>
+</ul>
+<p>查询示例</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match": &#123;</span><br><span class="line">      "username": "alfred way"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查询流程如下所示：<br><img src="/img/in-post/2019-03-15/1.png" alt=""></p>
+<p>通过operator参数可以控制单词间的匹配关系，可选项为or和and（默认为or）<br>通过minimum_should_match参数可以控制需要匹配的单词数</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match": &#123;</span><br><span class="line">      "username": &#123;</span><br><span class="line">        "query": "alfred way", </span><br><span class="line">        "operator": "and"</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match": &#123;</span><br><span class="line">      "username": &#123;</span><br><span class="line">        "query": "alfred way", </span><br><span class="line">        "minimum_should_match": 2</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">#`alfred` 和 `way`必须同时存在才能满足</span><br></pre></td></tr></table></figure>
+<h4 id="相关性算分"><a href="#相关性算分" class="headerlink" title="相关性算分"></a>相关性算分</h4><p>相关性算分是指文档与查询语句间的相关度，英文为relevance<br>通过倒排索引可以获取与查询语句相匹配的文档列表，那么如何将最符合用户查询需求的文档放到前列呢？本质是一个排序问题，排序依据是相关性算分。</p>
+<p>相关性算分的几个重要概念：</p>
+<ul>
+<li><code>Term Frequency（TF）</code>: 词频，即单词在该文档中出现的次数。词频越高，相关度越高</li>
+<li><code>Document Frequency（DF）</code>: 文档频率，即单词出现的文档数</li>
+<li><code>Inverse Document Frequency（IDF）</code>:逆向文档频率，与文档频率相反，简单理解为1/DF。即单词出现的文档数越少，相关度越高。</li>
+<li><code>Field-length Norm</code>: 文档越短，相关性越高</li>
+</ul>
+<p>ES目前主要有两个相关性算分模型：</p>
+<ul>
+<li>TF/IDF模型</li>
+<li>BM25模型：5.x之后的默认模型</li>
+</ul>
+<p>可以通过explain参数来查看具体的计算方法，但要注意：es的算分是按照shard进行的，即shard分数计算时互相独立的，所以在使用explain的时候注意分片数；可以通过设置索引的分片数为1来避免这个问题。</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  "explain": true,</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match": &#123;</span><br><span class="line">      "FIELD": "TEXT"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Match-Phrase-Query"><a href="#Match-Phrase-Query" class="headerlink" title="Match-Phrase-Query"></a>Match-Phrase-Query</h4><p>对字段作检索,有顺序要求，API示例：<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match_phrase": &#123;</span><br><span class="line">      "job": "engineer java"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过slop参数可以控制单词间的间隔,类似url search里的近似度匹配</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "match_phrase": &#123;</span><br><span class="line">      "job": &#123;</span><br><span class="line">        "query": "java engineer",</span><br><span class="line">        "slop": 1</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Query-String-Query"><a href="#Query-String-Query" class="headerlink" title="Query-String-Query"></a>Query-String-Query</h4><p>类似于URI Search中的q参数查询</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "profile": "true", </span><br><span class="line">  "query": &#123;</span><br><span class="line">    "query_string": &#123;</span><br><span class="line">      "default_field": "job",</span><br><span class="line">      "query": "engineer AND java"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多字段查询<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "profile": "true", </span><br><span class="line">  "query": &#123;</span><br><span class="line">    "query_string": &#123;</span><br><span class="line">      "fields": ["username", "job"],</span><br><span class="line">      "query": "engineer AND alfred"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Simple-Query-String-Query"><a href="#Simple-Query-String-Query" class="headerlink" title="Simple-Query-String-Query"></a>Simple-Query-String-Query</h4><p>类似Query String ,但是会忽略错误的查询语法,并且仅支持部分查询语法<br>其常用的逻辑符号如下,不能使用AND, OR, NOT等关键词</p>
+<ul>
+<li>+代指AND</li>
+<li>|代指OR</li>
+<li>-代指NOT请求</li>
+</ul>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "profile": "true", </span><br><span class="line">  "query": &#123;</span><br><span class="line">    "simple_query_string": &#123;</span><br><span class="line">      "fields": ["username"],</span><br><span class="line">      "query": "alfred +way"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>与?q=alfred +way不同的是这里的alfred 和 way必须同时存在</p>
+</blockquote>
+<h4 id="Term-Terms-Query"><a href="#Term-Terms-Query" class="headerlink" title="Term-Terms-Query"></a>Term-Terms-Query</h4><p>将查询语句作为整个单词进行查询,即不对查询语句做分词处理:</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "profile": "true", </span><br><span class="line">  "query": &#123;</span><br><span class="line">    "term": &#123;</span><br><span class="line">      "username": "alfred way"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一次传入多个单词进行查询:<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "profile": "true", </span><br><span class="line">  "query": &#123;</span><br><span class="line">    "terms": &#123;</span><br><span class="line">      "username": [</span><br><span class="line">        "alfred",</span><br><span class="line">        "way"</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Range-Query"><a href="#Range-Query" class="headerlink" title="Range Query"></a>Range Query</h4><p>范围查询主要针对数值和日期类型:</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "range": &#123;</span><br><span class="line">      "age": &#123;</span><br><span class="line">        "gt": 20,</span><br><span class="line">        "lt": 40</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>range 过滤器既能包含也能排除范围，通过下面的选项：</p>
+<ul>
+<li>gt: &gt; 大于</li>
+<li>lt: &lt; 小于</li>
+<li>gte: &gt;= 大于或等于</li>
+<li>lte: &lt;= 小于或等于</li>
+</ul>
+<p><code>range</code>过滤器也可以用于日期字段：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">"range":&#123;</span><br><span class="line">    "timestamp" : &#123;</span><br><span class="line">        "gt" : "2014-01-01 00:00:00",</span><br><span class="line">        "lt" : "2014-01-07 00:00:00"</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个过滤器将始终能找出所有时间戳大于当前时间减 1 小时的文档，让这个过滤器像移窗一样通过你的文档。</p>
+<p>日期计算也能用于实际的日期，而不是仅仅是一个像 now 一样的占位符。只要在日期后加上双竖线 ||，就能使用日期数学表达式了。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">"range" : &#123;</span><br><span class="line">    "timestamp" : &#123;</span><br><span class="line">        "gt" : "2014-01-01 00:00:00",</span><br><span class="line">        "lt" : "2014-01-01 00:00:00||+1M" &lt;1&gt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><1> 早于 2014 年 1 月 1 号加一个月<br>日期计算是与日历相关的，所以它知道每个月的天数，每年的天数，等等。更详细的关于日期的信息可以在这里找到<br><a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-date-format.html" target="_blank" rel="noopener">日期格式手册</a></1></p>
+<p><code>range</code>过滤器也可以用于字符串。字符串范围根据字典或字母顺序来计算。例如，这些值按照字典顺序排序：<br>假如我们想让范围从 a 开始而不包含 b，我们可以用类似的 range 过滤器语法：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">"range" : &#123;</span><br><span class="line">    "title" : &#123;</span><br><span class="line">        "gte" : "a",</span><br><span class="line">        "lt" :  "b"</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>数字和日期字段的索引方式让他们在计算范围时十分高效。但对于字符串来说却不是这样。为了在字符串上执行范围操作，Elasticsearch 会在这个范围内的每个短语执行 term 操作。这比日期或数字的范围操作慢得多。<br> 字符串范围适用于一个基数较小的字段，一个唯一短语个数较少的字段。你的唯一短语数越多，搜索就越慢。</p>
+</blockquote>
+<h4 id="复合查询"><a href="#复合查询" class="headerlink" title="复合查询"></a>复合查询</h4><p>复合查询是指包含字段类查询或复合查询的类型,主要包括以下几类:</p>
+<ul>
+<li>constant_score query</li>
+<li>bool query</li>
+<li>dis_max query</li>
+<li>function_score query</li>
+<li>boosting query </li>
+</ul>
+<p><strong>Constant Score Query</strong><br>该查询将其内部的查询结果文档得分都设定为1或者boost的值<br>多用于结合bool查询实现自定义得分<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "constant_score": &#123;</span><br><span class="line">      "filter": &#123;</span><br><span class="line">        "match": &#123;</span><br><span class="line">          "username": "alfred"</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查询结果<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"took"</span> : <span class="number">13</span>,</span><br><span class="line">  <span class="attr">"timed_out"</span> : <span class="literal">false</span>,</span><br><span class="line">  <span class="attr">"_shards"</span> : &#123;</span><br><span class="line">    <span class="attr">"total"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"successful"</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"skipped"</span> : <span class="number">0</span>,</span><br><span class="line">    <span class="attr">"failed"</span> : <span class="number">0</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"hits"</span> : &#123;</span><br><span class="line">    <span class="attr">"total"</span> : &#123;</span><br><span class="line">      <span class="attr">"value"</span> : <span class="number">3</span>,</span><br><span class="line">      <span class="attr">"relation"</span> : <span class="string">"eq"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"max_score"</span> : <span class="number">1.0</span>,</span><br><span class="line">    <span class="attr">"hits"</span> : [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"1"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">1.0</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred way"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"java engineer"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">18</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1990-01-02"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"2"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">1.0</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"java senior engineer and java specialist"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">28</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1980-05-07"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">        <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">        <span class="attr">"_id"</span> : <span class="string">"4"</span>,</span><br><span class="line">        <span class="attr">"_score"</span> : <span class="number">1.0</span>,</span><br><span class="line">        <span class="attr">"_source"</span> : &#123;</span><br><span class="line">          <span class="attr">"username"</span> : <span class="string">"alfred junior way"</span>,</span><br><span class="line">          <span class="attr">"job"</span> : <span class="string">"ruby engineer"</span>,</span><br><span class="line">          <span class="attr">"age"</span> : <span class="number">23</span>,</span><br><span class="line">          <span class="attr">"birth"</span> : <span class="string">"1989-08-07"</span>,</span><br><span class="line">          <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Bool-Query"><a href="#Bool-Query" class="headerlink" title="Bool Query"></a>Bool Query</h4><p>布尔查询由一个或多个布尔子句组成,主要包含如下4个:</p>
+<table>
+<thead>
+<tr>
+<th>子句</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td>只过滤符合条件的文档，不计算相关性算分</td>
+</tr>
+<tr>
+<td>must</td>
+<td>文档必须符合must中所有条件，影响相关性算分</td>
+</tr>
+<tr>
+<td>must_not</td>
+<td>文档必须不符合must中所有条件</td>
+</tr>
+<tr>
+<td>should</td>
+<td>文档可以符合should中的条件，不计算相关性算分</td>
+</tr>
+</tbody>
+</table>
+<p><strong>filter</strong><br>API:<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "bool": &#123;</span><br><span class="line">      "must": [</span><br><span class="line">        &#123;&#125;</span><br><span class="line">      ],</span><br><span class="line">      "must_not": [</span><br><span class="line">        &#123;&#125;</span><br><span class="line">      ],</span><br><span class="line">      "should": [</span><br><span class="line">        &#123;&#125;</span><br><span class="line">      ],</span><br><span class="line">      "filter": [</span><br><span class="line">        &#123;&#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>Filter</code>查询只过滤符合条件的文档,不会进行相关性算分</p>
+<p>es针对<code>filter</code>会有智能缓存,因此其执行效率很高<br>做简单匹配查询且不考虑算分时,推荐使用<code>filter</code>替代<code>query</code>等</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "bool": &#123;</span><br><span class="line">      "filter": [</span><br><span class="line">        &#123;</span><br><span class="line">          "term": &#123;</span><br><span class="line">            "username":"alfred"</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>must</strong>:<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "bool": &#123;</span><br><span class="line">      "must": [</span><br><span class="line">        &#123;</span><br><span class="line">          "match": &#123;</span><br><span class="line">            "username":"alfred"</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          "match": &#123;</span><br><span class="line">            "job":"java"</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>返回结果:<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">  <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">  <span class="attr">"_id"</span> : <span class="string">"2"</span>,</span><br><span class="line">  <span class="attr">"_score"</span> : <span class="number">1.2314217</span>,</span><br><span class="line">  <span class="attr">"_source"</span> : &#123;</span><br><span class="line">    <span class="attr">"username"</span> : <span class="string">"alfred"</span>,</span><br><span class="line">    <span class="attr">"job"</span> : <span class="string">"java senior engineer and java specialist"</span>,</span><br><span class="line">    <span class="attr">"age"</span> : <span class="number">28</span>,</span><br><span class="line">    <span class="attr">"birth"</span> : <span class="string">"1980-05-07"</span>,</span><br><span class="line">    <span class="attr">"isMarried"</span> : <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">  <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">  <span class="attr">"_id"</span> : <span class="string">"1"</span>,</span><br><span class="line">  <span class="attr">"_score"</span> : <span class="number">1.1256535</span>,</span><br><span class="line">  <span class="attr">"_source"</span> : &#123;</span><br><span class="line">    <span class="attr">"username"</span> : <span class="string">"alfred way"</span>,</span><br><span class="line">    <span class="attr">"job"</span> : <span class="string">"java engineer"</span>,</span><br><span class="line">    <span class="attr">"age"</span> : <span class="number">18</span>,</span><br><span class="line">    <span class="attr">"birth"</span> : <span class="string">"1990-01-02"</span>,</span><br><span class="line">    <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>_score</code>为两个match查询到的分数之和</p>
+</blockquote>
+<p><strong>must_not</strong>:<br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "bool": &#123;</span><br><span class="line">      "must": [</span><br><span class="line">        &#123;</span><br><span class="line">          "match": &#123;</span><br><span class="line">            "username":"alfred"</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      "must_not": [</span><br><span class="line">        &#123;</span><br><span class="line">          "match": &#123;</span><br><span class="line">            "job":"specialist"</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>匹配username包含<code>alfred</code>并且job不能包含<code>specialist</code></p>
+</blockquote>
+<p><strong>Should</strong>:</p>
+<ul>
+<li>Should使用分两种情况:<ul>
+<li>bool查询中只包含should ,不包含must查询</li>
+<li>bool查询中同时包含should和must查询</li>
+</ul>
+</li>
+<li>只包含should时,文档必须满足至少一个条件<ul>
+<li>minimum_should_match可以控制满足条件的个数或者百分比</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "bool": &#123;</span><br><span class="line">      "should": [</span><br><span class="line">        &#123;"term": &#123;"username": "alfred"&#125;&#125;,</span><br><span class="line">        &#123;"term": &#123;"username": "way"&#125;&#125;,</span><br><span class="line">        &#123;"term": &#123;"username": "junior"&#125;&#125;</span><br><span class="line">      ], </span><br><span class="line">      "minimum_should_match": 2</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">    <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">    <span class="attr">"_id"</span> : <span class="string">"4"</span>,</span><br><span class="line">    <span class="attr">"_score"</span> : <span class="number">1.8147054</span>,</span><br><span class="line">    <span class="attr">"_source"</span> : &#123;</span><br><span class="line">      <span class="attr">"username"</span> : <span class="string">"alfred junior way"</span>,</span><br><span class="line">      <span class="attr">"job"</span> : <span class="string">"ruby engineer"</span>,</span><br><span class="line">      <span class="attr">"age"</span> : <span class="number">23</span>,</span><br><span class="line">      <span class="attr">"birth"</span> : <span class="string">"1989-08-07"</span>,</span><br><span class="line">      <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"_index"</span> : <span class="string">"test_search_index"</span>,</span><br><span class="line">    <span class="attr">"_type"</span> : <span class="string">"_doc"</span>,</span><br><span class="line">    <span class="attr">"_id"</span> : <span class="string">"1"</span>,</span><br><span class="line">    <span class="attr">"_score"</span> : <span class="number">0.97797304</span>,</span><br><span class="line">    <span class="attr">"_source"</span> : &#123;</span><br><span class="line">      <span class="attr">"username"</span> : <span class="string">"alfred way"</span>,</span><br><span class="line">      <span class="attr">"job"</span> : <span class="string">"java engineer"</span>,</span><br><span class="line">      <span class="attr">"age"</span> : <span class="number">18</span>,</span><br><span class="line">      <span class="attr">"birth"</span> : <span class="string">"1990-01-02"</span>,</span><br><span class="line">      <span class="attr">"isMarried"</span> : <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>minimum_should_match加上后只返回了两个结果</p>
+</blockquote>
+<p>同时包含should和must时,文档不必满足should中的条件,但是如果满足条件,会增加相关性得分</p>
+<figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "query": &#123;</span><br><span class="line">    "bool": &#123;</span><br><span class="line">      "should": [</span><br><span class="line">        &#123;"term": &#123;"job": "ruby"&#125;&#125;</span><br><span class="line">      ],</span><br><span class="line">      "must": [</span><br><span class="line">        &#123;"term": &#123;"username": "alfred"&#125;&#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>job</code> 为<code>ruby</code>的会增加分数排名更靠前</p>
+</blockquote>
+<h4 id="Query-Context-VS-Filter-Context"><a href="#Query-Context-VS-Filter-Context" class="headerlink" title="Query Context VS Filter Context"></a>Query Context VS Filter Context</h4><p>当一个查询语句位于Query或者Filter上下文时, es执行的结果会不同,对比如下:</p>
+<table>
+<thead>
+<tr>
+<th>上下文类型</th>
+<th>执行类型</th>
+<th>使用方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查找与查询语句最匹配的文档，对所有文档进行算分和排序</td>
+<td>query<br>bool中的<code>must</code>和<code>should</code></td>
+</tr>
+<tr>
+<td>查找与查询语句相匹配的文档</td>
+<td>bool中的<code>filter</code>与<code>must_not</code><br>constant_score中的<code>filter</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="Count-And-Source-Filtering"><a href="#Count-And-Source-Filtering" class="headerlink" title="Count And Source Filtering"></a>Count And Source Filtering</h4><p><strong>count</strong></p>
+<p>获取符合条件的文档数, endpoint为<code>_count</code></p>
+<p><strong>source filtering</strong><br>过滤返回结果中source中的字段,主要有如下几种方式:</p>
+<p><strong>uri:</strong><br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search?_source=username</span><br></pre></td></tr></table></figure></p>
+<p><strong>禁用source:</strong><br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "_source": false</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>传字段名:</strong><br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "_source": ["username","job"]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>包括和不包括模糊匹配</strong><br><figure class="highlight"><figcaption><span>request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET test_search_index/_search</span><br><span class="line">&#123;</span><br><span class="line">  "_source": &#123;</span><br><span class="line">    "includes": "*i*",</span><br><span class="line">    "excludes": "birth"</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+    <div>
+          
+            
+          
+    </div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elasticsearch/" rel="tag"><i class="fa fa-tag"></i> elasticsearch</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div class="social_share">
+            
+              <div>
+                
+  <div class="bdsharebuttonbox">
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+    <a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+    <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a>
+    <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+    <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+    <a href="#" class="bds_more" data-cmd="more"></a>
+    <a class="bds_count" data-cmd="count"></a>
+  </div>
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "2",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "share": {
+        "bdSize": "16",
+        "bdStyle": "0"
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+              </div>
+            
+            
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/16/2019-11-12-elasticsearch-num8/" rel="next" title="Elasticsearch 数据建模">
+                <i class="fa fa-chevron-left"></i> Elasticsearch 数据建模
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/20/2019-08-31-k8s/" rel="prev" title="Kubenetets 安装">
+                Kubenetets 安装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/pengshiliang.jpg" alt="enpsl">
+            
+              <p class="site-author-name" itemprop="name">enpsl</p>
+              <p class="site-description motion-element" itemprop="description">my blog</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/enpsl" title="GitHub &rarr; https://github.com/enpsl" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/pslpro" title="Weibo &rarr; https://weibo.com/pslpro" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>Weibo</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#URI-Search详解"><span class="nav-number">1.</span> <span class="nav-text">URI Search详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Query-String-Syntax"><span class="nav-number">2.</span> <span class="nav-text">Query String Syntax</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#语法介绍"><span class="nav-number">2.1.</span> <span class="nav-text">语法介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询示例"><span class="nav-number">2.2.</span> <span class="nav-text">查询示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Request-Body-Search"><span class="nav-number">3.</span> <span class="nav-text">Request Body Search</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Query-DSL"><span class="nav-number">3.1.</span> <span class="nav-text">Query DSL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字段类查询"><span class="nav-number">3.1.1.</span> <span class="nav-text">字段类查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#相关性算分"><span class="nav-number">3.1.2.</span> <span class="nav-text">相关性算分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Match-Phrase-Query"><span class="nav-number">3.1.3.</span> <span class="nav-text">Match-Phrase-Query</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Query-String-Query"><span class="nav-number">3.1.4.</span> <span class="nav-text">Query-String-Query</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Simple-Query-String-Query"><span class="nav-number">3.1.5.</span> <span class="nav-text">Simple-Query-String-Query</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Term-Terms-Query"><span class="nav-number">3.1.6.</span> <span class="nav-text">Term-Terms-Query</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Range-Query"><span class="nav-number">3.1.7.</span> <span class="nav-text">Range Query</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复合查询"><span class="nav-number">3.1.8.</span> <span class="nav-text">复合查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bool-Query"><span class="nav-number">3.1.9.</span> <span class="nav-text">Bool Query</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Query-Context-VS-Filter-Context"><span class="nav-number">3.1.10.</span> <span class="nav-text">Query Context VS Filter Context</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Count-And-Source-Filtering"><span class="nav-number">3.1.11.</span> <span class="nav-text">Count And Source Filtering</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">enpsl</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">255k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">3:52</span>
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'DEj2x1d388d2HxBNMAEETUPf-gzGzoHsz',
+    appKey: 'pMbUNFO55ydSxGeUNjhYJEUu',
+    placeholder: '免登录，直接说',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+</script>
+
+
+
+
+  
+
+
+  
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+<script type="text/javascript" src="/js/src/wechat.js"></script>
+</html>
